@@ -1,0 +1,40 @@
+---
+import BoardGame from "../../components/BoardGame.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+  const allBoardGames = Object.values(
+    import.meta.glob("../boardgames/*.md", { eager: true }),
+  );
+
+  const uniqueTags = [
+    ...new Set(
+      allBoardGames.map((boardGame: any) => boardGame.frontmatter.tags).flat(),
+    ),
+  ];
+  
+  return uniqueTags.map((tag) => {
+    const filteredBoardGames = allBoardGames.filter((boardGame: any) =>
+      boardGame.frontmatter.tags.includes(tag),
+    );
+    return {
+      params: { tag },
+      props: { boardGames: filteredBoardGames },
+    };
+  });
+}
+
+const { tag } = Astro.params;
+const { boardGames } = Astro.props;
+---
+
+<BaseLayout pageTitle={tag}>
+  <p>Board games tagged with {tag}</p>
+  <ul>
+    {
+      boardGames.map((boardGame: any) => (
+        <BoardGame title={boardGame.frontmatter.title} url={boardGame.url} />
+      ))
+    }
+  </ul>
+</BaseLayout>

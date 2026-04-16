@@ -1,0 +1,19 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BoardGame from "../../components/BoardGame.astro";
+
+const allBoardGames = Object.values(
+  import.meta.glob("../boardgames/*.md", { eager: true }),
+);
+const pageTitle = "My Board Game Collection";
+---
+
+<BaseLayout pageTitle={pageTitle}>
+  <ul>
+    {
+      allBoardGames.map((boardGame: any) => (
+        <BoardGame title={boardGame.frontmatter.title} url={boardGame.url} />
+      ))
+    }
+  </ul>
+</BaseLayout>
